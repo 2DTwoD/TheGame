@@ -1,5 +1,5 @@
 class Pair:
-    def __init__(self, _x, _y):
+    def __init__(self, _x: int, _y: int):
         self._x = _x
         self._y = _y
 
@@ -8,7 +8,7 @@ class Pair:
         return self._x
 
     @x.setter
-    def x(self, value):
+    def x(self, value: int):
         self._x = value
 
     @property
@@ -16,7 +16,7 @@ class Pair:
         return self._y
 
     @y.setter
-    def y(self, value):
+    def y(self, value: int):
         self._y = value
 
     def get(self):
@@ -63,6 +63,7 @@ class KeyMatrix:
         self._up = False
         self._left = False
         self._right = False
+        self._space = False
 
     @property
     def down(self):
@@ -95,3 +96,11 @@ class KeyMatrix:
     @right.setter
     def right(self, value):
         self._right = value
+
+    @property
+    def space(self):
+        return self._space
+
+    @space.setter
+    def space(self, value):
+        self._space = value

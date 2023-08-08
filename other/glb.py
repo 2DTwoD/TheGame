@@ -1,17 +1,12 @@
-from pygame import Surface
-
-from other.unit_parameters import Pair
+import pygame
 
 
 class Global:
-    def __init__(self):
-        self.screen = None
-        self.hero = None
-        self.walls = None
-        self.enemies = None
-
-    def initGlobal(self, screen: Surface, hero, walls, enemies):
-        self.screen = screen
-        self.hero = hero
-        self.walls = walls
-        self.enemies = enemies
+    SCREEN_SIZE = (500, 500)
+    walls = []
+    enemies = []
+    bullets = set()
+    hero = None
+    screen = pygame.display.set_mode(SCREEN_SIZE)
+    worldSpeed = 0
+    g = 0.5
