@@ -32,43 +32,26 @@ class Hero(GravityUnitI):
         if self.coordinates.y > Global.SCREEN_SIZE[1]:
             self.coordinates.y = -self.dimensions.y
 
-        if self.keyMatrix.right:
+        if Global.keys[pygame.K_d]:
+            self.direction = 1
             self.speed.x = Hero.move
-        if self.keyMatrix.left:
+        if Global.keys[pygame.K_a]:
+            self.direction = 0
             self.speed.x = -Hero.move
-        if not self.keyMatrix.right and not self.keyMatrix.left:
+        if not (Global.keys[pygame.K_d] + Global.keys[pygame.K_a]):
             self.speed.x = 0
 
         if self.currentReload > 0:
             self.currentReload -= 1
 
-        if self.keyMatrix.space and self.currentReload == 0:
+        if Global.keys[pygame.K_SPACE] and self.currentReload == 0:
             self.currentReload = Hero.reloadCicle
-            Global.bullets.add(Bullet(self.coordinates.x + self.direction * self.dimensions.x,
+            Global.bullets.add(Bullet(self.middle_x,
                                       self.coordinates.y + self.dimensions.y / 2,
                                       self.direction))
+        if Global.keys[pygame.K_w] and self.onGround:
+            self.speed.y = -Hero.move * 3
 
         self.shape.x = self.coordinates.x
         self.shape.y = self.coordinates.y
         pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)
-
-    def eventHandler(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                self.direction = 0
-                self.keyMatrix.left = True
-            if event.key == pygame.K_RIGHT:
-                self.direction = 1
-                self.keyMatrix.right = True
-            if event.key == pygame.K_UP and self.onGround:
-                self.speed.y = -Hero.move * 3
-            if event.key == pygame.K_SPACE:
-                self.keyMatrix.space = True
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                self.keyMatrix.left = False
-            if event.key == pygame.K_RIGHT:
-                self.keyMatrix.right = False
-            if event.key == pygame.K_SPACE:
-                self.keyMatrix.space = False

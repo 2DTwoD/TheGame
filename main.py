@@ -1,3 +1,5 @@
+from random import random
+
 import pygame
 import sys
 
@@ -11,11 +13,11 @@ pygame.init()
 clock = pygame.time.Clock()
 backgroundColor = Color(0, 0, 0)
 Global.hero = Hero()
-Global.walls.extend([Wall(0, 500, 500, 100, Color(128, 128, 0)),
-                       Wall(200, 400, 100, 100, Color(128, 128, 0))])
+Global.walls.update([Wall(0, 500, 500, 100, Color(128, 128, 0)),
+                       Wall(200, 300, 100, 100, Color(128, 128, 0))])
 
-Global.enemies.extend([Enemy(300, 0, 25, 25, Color(237, 28, 36))])
-#
+Global.enemies.update([Enemy(0, random(Global.SCREEN_SIZE[0]), 25, 25, Color(237, 28, 36))])
+
 # Wall(400, 400, 100, 100, Color(128, 128, 0)),
 #                     Wall(200, 300, 100, 100, Color(128, 128, 0)),
 #                     Wall(100, 200, 100, 100, Color(128, 128, 0)),
@@ -27,11 +29,10 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        Global.hero.eventHandler(event)
-
+    Global.keys = pygame.key.get_pressed()
     for wall in Global.walls:
         wall.draw()
-    for enemy in Global.enemies:
+    for enemy in Global.enemies.copy():
         enemy.draw()
     for bullet in Global.bullets.copy():
         bullet.draw()

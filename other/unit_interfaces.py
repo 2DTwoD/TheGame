@@ -24,6 +24,15 @@ class Attributes:
     def down_y(self):
         return self.coordinates.y + self.dimensions.y
 
+    @property
+    def middle_x(self):
+        return self.coordinates.x + (self.right_x - self.left_x) / 2
+
+    @property
+    def middle_y(self):
+        return self.coordinates.y + (self.down_y - self.up_y) / 2
+
+
 class UnitI(Attributes):
     UP = 0
     DOWN = 1
@@ -32,7 +41,6 @@ class UnitI(Attributes):
 
     def __init__(self, x, y, width, height):
         Attributes.__init__(self, Pair(x, y), Pair(width, height))
-        self.onGround = True
         self.speed = Pair(0, 0)
         self.shape = None
 
@@ -46,65 +54,39 @@ class UnitI(Attributes):
     def commonEngine(self):
         self.coordinates.x += self.speed.x
         self.coordinates.y += self.speed.y
-        # if self.speed.x > 0:
-        #     self.hitWallTest(UnitI.RIGHT)
-        # elif self.speed.x < 0:
-        #     self.hitWallTest(UnitI.LEFT)
-        # if self.speed.y > 0:
-        #     self.hitWallTest(UnitI.DOWN)
-        # elif self.speed.y < 0:
-        #     self.hitWallTest(UnitI.UP)
-        for wall in Global.walls:
-            if self.speed.x != 0 and self.hitTestX(wall):
-                self.coordinates.x -= self.speed.x
-                self.speed.x = 0
-            if self.speed.y != 0 and self.hitTestY(wall):
-                self.coordinates.y -= self.speed.y
-                self.speed.y = 0
-
         self.coordinates.y += Global.worldSpeed
 
-    # def hitWallTest(self, direction):
-    #     self.onGround = False
-    #     for wall in Global.walls:
-    #         if direction == UnitI.UP or direction == UnitI.DOWN:
-    #             if self.shape.x + self.dimensions.x <= wall.coordinates.x \
-    #                     or self.shape.x >= wall.coordinates.x + wall.dimensions.x:
-    #                 continue
-    #             if wall.coordinates.y - self.dimensions.y < self.coordinates.y < wall.coordinates.y + wall.dimensions.y:
-    #                 self.coordinates.y -= self.speed.y
-    #                 self.speed.y = 0
-    #                 self.onGround = direction == UnitI.DOWN
-    #         elif direction == UnitI.LEFT or direction == UnitI.RIGHT:
-    #             if self.shape.y + self.dimensions.y <= wall.coordinates.y \
-    #                     or self.shape.y >= wall.coordinates.y + wall.dimensions.y:
-    #                 continue
-    #             if wall.coordinates.x + wall.dimensions.x > self.coordinates.x > wall.coordinates.x - self.dimensions.x:
-    #                 self.coordinates.x -= self.speed.x
-    #                 self.speed.x = 0
-
-    def hitTestX(self, obj: Attributes):
-        if self.down_y > obj.up_y and self.up_y < obj.down_y:
-            if self.right_x > obj.left_x and self.left_x < obj.right_x:
-                return True
-        return False
-
-    def hitTestY(self, obj: Attributes):
-        if self.right_x > obj.left_x and self.left_x < obj.right_x:
-            if self.down_y >= obj.up_y and self.up_y <= obj.down_y:
-                return True
-        return False
+    def hitTest(self, obj: Attributes):
+        return self.right_x + self.speed.x > obj.left_x and self.left_x + self.speed.x < obj.right_x and \
+                self.down_y + self.speed.y > obj.up_y and self.up_y + self.speed.y < obj.down_y
 
 
 class GravityUnitI(UnitI):
     def __init__(self, x, y, width, height):
         UnitI.__init__(self, x, y, width, height)
+        self.onGround = False
 
-    def draw(self):
-        self.singleEngine()
-        self.commonEngine()
+    def commonEngine(self):
         self.speed.y += Global.g
-
+        self.onGround = False
+        for wall in Global.walls:
+            if self.hitTest(wall):
+                if self.down_y <= wall.up_y:
+                    self.coordinates.y = wall.up_y - self.dimensions.y
+                    self.speed.y = 0
+                    self.onGround = True
+                    continue
+                elif self.up_y >= wall.down_y:
+                    self.coordinates.y = wall.down_y
+                    self.speed.y = 0
+                    continue
+                if self.right_x <= wall.left_x:
+                    self.coordinates.x = wall.left_x - self.dimensions.x
+                    self.speed.x = 0
+                elif self.left_x >= wall.right_x:
+                    self.coordinates.x = wall.right_x
+                    self.speed.x = 0
+        UnitI.commonEngine(self)
 
 class WallI(Attributes):
     def __init__(self, x, y, width, height):
