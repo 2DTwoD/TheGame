@@ -2,13 +2,15 @@ import pygame
 
 from other.glb import Global
 from other.unit_interfaces import GravityUnitI
-from other.unit_parameters import Color, KeyMatrix
-from units.bullet import Bullet
+from other.unit_parameters import Color, KeyMatrix, Pair
+from units.bullets import Bullet
 
 
 class Hero(GravityUnitI):
-    move = 5
+    maxSpeed = 5
+    acceleration = 0.5
     reloadCicle = 5
+    damageTime = 60
 
     def __init__(self):
         GravityUnitI.__init__(self, 0, 0, 25, 25)
@@ -17,32 +19,31 @@ class Hero(GravityUnitI):
         self.keyMatrix = KeyMatrix()
         self.direction = 1
         self.currentReload = Hero.reloadCicle
+        self.damageAnimation = 0
+        self.health = 0
 
     def singleEngine(self):
-        if self.coordinates.x < 0:
-            self.coordinates.x = 0
-
-        if self.coordinates.x > Global.SCREEN_SIZE[0] - self.dimensions.x:
-            self.coordinates.x = Global.SCREEN_SIZE[0] - self.dimensions.x
-
-        if self.coordinates.y < 0:
-            self.coordinates.y = 0
-            self.speed.y = 0
-
-        if self.coordinates.y > Global.SCREEN_SIZE[1]:
-            self.coordinates.y = -self.dimensions.y
-
         if Global.keys[pygame.K_d]:
             self.direction = 1
-            self.speed.x = Hero.move
         if Global.keys[pygame.K_a]:
-            self.direction = 0
-            self.speed.x = -Hero.move
+            self.direction = -1
         if not (Global.keys[pygame.K_d] + Global.keys[pygame.K_a]):
-            self.speed.x = 0
+            if self.speed.x * self.direction > 0:
+                self.speed.x -= Hero.acceleration * self.direction
+            else:
+                self.speed.x = 0
+        else:
+            self.speed.x += Hero.acceleration * self.direction
+            if self.speed.x > Hero.maxSpeed:
+                self.speed.x = Hero.maxSpeed
+            elif self.speed.x < -Hero.maxSpeed:
+                self.speed.x = -Hero.maxSpeed
 
         if self.currentReload > 0:
             self.currentReload -= 1
+
+        if self.speed.y > Hero.maxSpeed * 3:
+            self.speed.y = Hero.maxSpeed * 3
 
         if Global.keys[pygame.K_SPACE] and self.currentReload == 0:
             self.currentReload = Hero.reloadCicle
@@ -50,8 +51,31 @@ class Hero(GravityUnitI):
                                       self.coordinates.y + self.dimensions.y / 2,
                                       self.direction))
         if Global.keys[pygame.K_w] and self.onGround:
-            self.speed.y = -Hero.move * 3
+            self.speed.y = -Hero.maxSpeed * 3
+        if self.damageAnimation <= 0:
+            for enemy in Global.enemies:
+                if self.hitTest(enemy):
+                    self.setDamage(enemy)
+        else:
+            self.damageAnimation -= 1
 
+    def drawFigure(self):
         self.shape.x = self.coordinates.x
         self.shape.y = self.coordinates.y
-        pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)
+        if self.damageAnimation % 2 == 0:
+            pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)
+
+    def setDamage(self, enemy):
+        if self.damageAnimation != 0:
+            return
+        pair = Pair(self.speed.x, self.speed.y)
+        self.speed.x = enemy.speed.x
+        self.speed.y = enemy.speed.y
+        enemy.speed.x = pair.x
+        enemy.speed.y = pair.y
+        self.damageAnimation = Hero.damageTime
+        self.health -= enemy.damage
+
+    def falling(self):
+        self.coordinates.y = 0
+

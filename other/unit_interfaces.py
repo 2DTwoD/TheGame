@@ -45,6 +45,7 @@ class UnitI(Attributes):
         self.shape = None
 
     def draw(self):
+        self.drawFigure()
         self.singleEngine()
         self.commonEngine()
 
@@ -58,7 +59,10 @@ class UnitI(Attributes):
 
     def hitTest(self, obj: Attributes):
         return self.right_x + self.speed.x > obj.left_x and self.left_x + self.speed.x < obj.right_x and \
-                self.down_y + self.speed.y > obj.up_y and self.up_y + self.speed.y < obj.down_y
+               self.down_y + self.speed.y > obj.up_y and self.up_y + self.speed.y < obj.down_y
+
+    def drawFigure(self):
+        pass
 
 
 class GravityUnitI(UnitI):
@@ -66,27 +70,47 @@ class GravityUnitI(UnitI):
         UnitI.__init__(self, x, y, width, height)
         self.onGround = False
 
-    def commonEngine(self):
+    def draw(self):
         self.speed.y += Global.g
-        self.onGround = False
-        for wall in Global.walls:
-            if self.hitTest(wall):
-                if self.down_y <= wall.up_y:
-                    self.coordinates.y = wall.up_y - self.dimensions.y
-                    self.speed.y = 0
-                    self.onGround = True
-                    continue
-                elif self.up_y >= wall.down_y:
-                    self.coordinates.y = wall.down_y
-                    self.speed.y = 0
-                    continue
-                if self.right_x <= wall.left_x:
-                    self.coordinates.x = wall.left_x - self.dimensions.x
-                    self.speed.x = 0
-                elif self.left_x >= wall.right_x:
-                    self.coordinates.x = wall.right_x
-                    self.speed.x = 0
+        UnitI.draw(self)
         UnitI.commonEngine(self)
+        if self.coordinates.x < 0:
+            self.coordinates.x = 0
+        if self.coordinates.x > Global.SCREEN_SIZE[0] - self.dimensions.x:
+            self.coordinates.x = Global.SCREEN_SIZE[0] - self.dimensions.x
+        if self.coordinates.y < 0:
+            self.coordinates.y = 0
+            self.speed.y = 0
+        if self.coordinates.y > Global.SCREEN_SIZE[1] + self.dimensions.y:
+            self.falling()
+
+    def commonEngine(self):
+        if self.speed.y != 0:
+            self.onGround = False
+        for wall in Global.walls:
+            self.getHitEngine(wall)
+
+    def getHitEngine(self, obj: Attributes):
+        if self.hitTest(obj):
+            if self.down_y <= obj.up_y:
+                self.coordinates.y = obj.up_y - self.dimensions.y
+                self.speed.y = 0
+                self.onGround = True
+                return
+            elif self.up_y >= obj.down_y:
+                self.coordinates.y = obj.down_y
+                self.speed.y = 0
+                return
+            if self.right_x <= obj.left_x:
+                self.coordinates.x = obj.left_x - self.dimensions.x
+                self.speed.x = 0
+            elif self.left_x >= obj.right_x:
+                self.coordinates.x = obj.right_x
+                self.speed.x = 0
+
+    def falling(self):
+        pass
+
 
 class WallI(Attributes):
     def __init__(self, x, y, width, height):
@@ -95,8 +119,12 @@ class WallI(Attributes):
     def draw(self):
         self.singleEngine()
         self.commonEngine()
+        self.drawFigure()
 
     def singleEngine(self):
+        pass
+
+    def drawFigure(self):
         pass
 
     def commonEngine(self):

@@ -2,22 +2,30 @@ import pygame
 
 from other.glb import Global
 from other.unit_interfaces import UnitI
-from other.unit_parameters import Color
+from other.unit_parameters import Color, Pair
 
 
 class Bullet(UnitI):
-    move = 15
-    damage = 3
+    HERO = 0
+    ENEMY = 1
+    move = 10
+    damage = 50
 
-    def __init__(self, x, y, direction):
+    def __init__(self, x, y, direction, target=ENEMY):
         UnitI.__init__(self, x, y, 5, 5)
-        self.move = -self.move if direction != 1 else self.move
+        self.speed.x = self.move * direction
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
-        self.color = Color(255, 255, 255)
+
         self.delFlag = False
+        if target == Bullet.ENEMY:
+            self.function = self.enemyTest
+            self.color = Color(255, 255, 255)
+        else:
+            self.function = self.heroTest
+            self.color = Color(237, 28, 36)
 
     def singleEngine(self):
-        self.coordinates.x += self.move
+        self.coordinates.x += self.speed.x
 
         self.shape.x = self.coordinates.x
         self.shape.y = self.coordinates.y
@@ -27,9 +35,20 @@ class Bullet(UnitI):
             if self.hitTest(wall):
                 Global.bullets.discard(self)
                 return
+        self.function()
+
+    def enemyTest(self):
         for enemy in Global.enemies:
             if self.hitTest(enemy):
                 Global.bullets.discard(self)
-                enemy.setDamage(Bullet.damage)
+                enemy.setDamage(Bullet.damage, self.move)
                 return
+
+    def heroTest(self):
+        if self.hitTest(Global.hero):
+            Global.bullets.discard(self)
+            Global.hero.setDamage(self)
+            return
+
+    def drawFigure(self):
         pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)

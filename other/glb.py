@@ -8,6 +8,6 @@ class Global:
     bullets = set()
     hero = None
     screen = pygame.display.set_mode(SCREEN_SIZE)
-    worldSpeed = 0
+    worldSpeed = 2
     g = 0.5
     keys = None
