@@ -22,7 +22,6 @@ Global.walls.update([Wall(400, 400, 100, 100, Color(128, 128, 0)),
 # Global.walls.update([Wall(0, 450, 500, 100, Color(128, 128, 0)),
 #                        Wall(0, 300, 100, 100, Color(128, 128, 0))])
 
-enemyBornTime = 0
 wallCreator = WallCreator()
 while True:
     wallCreator.run()
@@ -42,8 +41,4 @@ while True:
     pygame.display.flip()
     Global.screen.fill(backgroundColor.get())
     clock.tick(60)
-    if enemyBornTime < 60:
-        enemyBornTime += 1
-    else:
-        enemyBornTime = 0
-        Global.enemies.add(Enemy(randrange(Global.SCREEN_SIZE[0]), 0, 25, 25, Color(237, 28, 36)))
+

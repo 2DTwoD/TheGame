@@ -12,7 +12,7 @@ class Wall(WallI):
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
 
     def singleEngine(self):
-        if self.coordinates.y > Global.SCREEN_SIZE[1] + 1:
+        if self.coordinates.y > Global.screenHeight() + 1:
             Global.walls.discard(self)
 
     def drawFigure(self):

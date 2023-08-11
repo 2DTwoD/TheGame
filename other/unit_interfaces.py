@@ -76,12 +76,14 @@ class GravityUnitI(UnitI):
         UnitI.commonEngine(self)
         if self.coordinates.x < 0:
             self.coordinates.x = 0
-        if self.coordinates.x > Global.SCREEN_SIZE[0] - self.dimensions.x:
-            self.coordinates.x = Global.SCREEN_SIZE[0] - self.dimensions.x
+            self.speed.x = 0
+        if self.coordinates.x > Global.screenWidth() - self.dimensions.x:
+            self.coordinates.x = Global.screenWidth() - self.dimensions.x
+            self.speed.x = 0
         if self.coordinates.y < 0:
             self.coordinates.y = 0
             self.speed.y = 0
-        if self.coordinates.y > Global.SCREEN_SIZE[1] + self.dimensions.y:
+        if self.coordinates.y > Global.screenHeight() + self.dimensions.y:
             self.falling()
 
     def commonEngine(self):
@@ -93,23 +95,36 @@ class GravityUnitI(UnitI):
     def getHitEngine(self, obj: Attributes):
         if self.hitTest(obj):
             if self.down_y <= obj.up_y:
-                self.coordinates.y = obj.up_y - self.dimensions.y
-                self.speed.y = 0
-                self.onGround = True
+                self.downHit(obj)
                 return
             elif self.up_y >= obj.down_y:
-                self.coordinates.y = obj.down_y
-                self.speed.y = 0
+                self.upHit(obj)
                 return
             if self.right_x <= obj.left_x:
-                self.coordinates.x = obj.left_x - self.dimensions.x
-                self.speed.x = 0
+                self.rightHit(obj)
             elif self.left_x >= obj.right_x:
-                self.coordinates.x = obj.right_x
-                self.speed.x = 0
+                self.leftHit(obj)
 
     def falling(self):
         pass
+
+    def downHit(self, obj: Attributes):
+        self.coordinates.y = obj.up_y - self.dimensions.y
+        self.speed.y = 0
+        self.onGround = True
+
+    def upHit(self, obj: Attributes):
+        self.coordinates.y = obj.down_y
+        self.speed.y = 0
+        self.onGround = False
+
+    def rightHit(self, obj: Attributes):
+        self.coordinates.x = obj.left_x - self.dimensions.x
+        self.speed.x = 0
+
+    def leftHit(self, obj: Attributes):
+        self.coordinates.x = obj.right_x
+        self.speed.x = 0
 
 
 class WallI(Attributes):

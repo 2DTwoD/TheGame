@@ -1,8 +1,8 @@
 import pygame
 
 from other.glb import Global
-from other.unit_interfaces import GravityUnitI
-from other.unit_parameters import Color, KeyMatrix, Pair
+from other.unit_interfaces import GravityUnitI, Attributes
+from other.unit_parameters import Color, Pair
 from units.bullets import Bullet
 
 
@@ -16,11 +16,11 @@ class Hero(GravityUnitI):
         GravityUnitI.__init__(self, 0, 0, 25, 25)
         self.color = Color(255, 255, 255)
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
-        self.keyMatrix = KeyMatrix()
         self.direction = 1
         self.currentReload = Hero.reloadCicle
         self.damageAnimation = 0
         self.health = 0
+        self.verticalStep = True
 
     def singleEngine(self):
         if Global.keys[pygame.K_d]:
@@ -50,14 +50,28 @@ class Hero(GravityUnitI):
             Global.bullets.add(Bullet(self.middle_x,
                                       self.coordinates.y + self.dimensions.y / 2,
                                       self.direction))
-        if Global.keys[pygame.K_w] and self.onGround:
-            self.speed.y = -Hero.maxSpeed * 3
+
+        if Global.keys[pygame.K_w] and self.verticalStep:
+            if self.onGround:
+                self.speed.y = -Hero.maxSpeed * 1.2
+            self.speed.y -= 1.5
+            if self.speed.y < -Hero.maxSpeed * 3:
+                self.speed.y = -Hero.maxSpeed * 3
+                self.verticalStep = False
+        else:
+            self.verticalStep = self.onGround
+
         if self.damageAnimation <= 0:
             for enemy in Global.enemies:
                 if self.hitTest(enemy):
                     self.setDamage(enemy)
         else:
             self.damageAnimation -= 1
+
+    def upHit(self, obj: Attributes):
+        GravityUnitI.upHit(self, obj)
+        self.verticalStep = self.onGround
+
 
     def drawFigure(self):
         self.shape.x = self.coordinates.x
