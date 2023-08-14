@@ -83,6 +83,7 @@ class GravityUnitI(UnitI):
         if self.coordinates.y < 0:
             self.coordinates.y = 0
             self.speed.y = 0
+            self.upHit(Attributes(Pair(0, 0), Pair(0, 0)))
         if self.coordinates.y > Global.screenHeight() + self.dimensions.y:
             self.falling()
 

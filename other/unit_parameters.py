@@ -55,3 +55,14 @@ class Color:
 
     def get(self):
         return self.r, self.g, self.b
+
+
+class Colors:
+    WHITE = Color(255, 255, 255)
+    BLACK = Color(0, 0, 0)
+    GREEN = Color(34, 117, 76)
+    GRAY = Color(195, 195, 195)
+    RED = Color(237, 28, 36)
+    BLUE = Color(0, 162, 232)
+    YELLOW = Color(255, 242, 0)
+    BROWN = Color(131, 81, 54)

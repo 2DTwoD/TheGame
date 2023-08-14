@@ -6,11 +6,15 @@ class Global:
     walls = set()
     enemies = set()
     bullets = set()
+    bonuses = set()
     hero = None
     screen = pygame.display.set_mode(SCREEN_SIZE)
-    worldSpeed = 1
+    worldSpeed = 2
     g = 0.5
     keys = None
+    difficult = 1
+    maxDifficult = 10
+    titles = None
 
     @staticmethod
     def screenWidth():

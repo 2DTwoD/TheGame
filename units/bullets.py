@@ -26,9 +26,6 @@ class Bullet(UnitI):
 
     def singleEngine(self):
         self.coordinates.x += self.speed.x
-
-        self.shape.x = self.coordinates.x
-        self.shape.y = self.coordinates.y
         if self.coordinates.x > Global.SCREEN_SIZE[0] or self.coordinates.x < 0:
             Global.bullets.discard(self)
         for wall in Global.walls:
@@ -51,4 +48,6 @@ class Bullet(UnitI):
             return
 
     def drawFigure(self):
+        self.shape.x = self.coordinates.x
+        self.shape.y = self.coordinates.y
         pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)

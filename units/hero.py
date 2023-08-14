@@ -4,10 +4,11 @@ from other.glb import Global
 from other.unit_interfaces import GravityUnitI, Attributes
 from other.unit_parameters import Color, Pair
 from units.bullets import Bullet
+from units.enemy import Enemy
 
 
 class Hero(GravityUnitI):
-    maxSpeed = 5
+    maxSpeed = 6
     acceleration = 0.5
     reloadCicle = 5
     damageTime = 60
@@ -19,7 +20,7 @@ class Hero(GravityUnitI):
         self.direction = 1
         self.currentReload = Hero.reloadCicle
         self.damageAnimation = 0
-        self.health = 0
+        self._health = 100
         self.verticalStep = True
 
     def singleEngine(self):
@@ -45,16 +46,17 @@ class Hero(GravityUnitI):
         if self.speed.y > Hero.maxSpeed * 3:
             self.speed.y = Hero.maxSpeed * 3
 
-        if Global.keys[pygame.K_SPACE] and self.currentReload == 0:
+        if Global.keys[pygame.K_SPACE] and self.currentReload == 0 and Global.titles.bullets > 0:
             self.currentReload = Hero.reloadCicle
             Global.bullets.add(Bullet(self.middle_x,
                                       self.coordinates.y + self.dimensions.y / 2,
                                       self.direction))
+            Global.titles.bullets -= 1
 
         if Global.keys[pygame.K_w] and self.verticalStep:
             if self.onGround:
                 self.speed.y = -Hero.maxSpeed * 1.2
-            self.speed.y -= 1.5
+            self.speed.y -= 1.3
             if self.speed.y < -Hero.maxSpeed * 3:
                 self.speed.y = -Hero.maxSpeed * 3
                 self.verticalStep = False
@@ -72,24 +74,39 @@ class Hero(GravityUnitI):
         GravityUnitI.upHit(self, obj)
         self.verticalStep = self.onGround
 
-
     def drawFigure(self):
         self.shape.x = self.coordinates.x
         self.shape.y = self.coordinates.y
         if self.damageAnimation % 2 == 0:
             pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)
 
-    def setDamage(self, enemy):
+    def setDamage(self, damageSource):
         if self.damageAnimation != 0:
             return
-        pair = Pair(self.speed.x, self.speed.y)
-        self.speed.x = enemy.speed.x
-        self.speed.y = enemy.speed.y
-        enemy.speed.x = pair.x
-        enemy.speed.y = pair.y
         self.damageAnimation = Hero.damageTime
-        self.health -= enemy.damage
+        if isinstance(damageSource, Enemy):
+            pair = Pair(self.speed.x, self.speed.y)
+            self.speed.x = damageSource.speed.x
+            self.speed.y = damageSource.speed.y
+            damageSource.speed.x = pair.x
+            damageSource.speed.y = pair.y
+            self.health -= damageSource.damage
+        elif isinstance(damageSource, int):
+            self.health -= damageSource
 
     def falling(self):
         self.coordinates.y = 0
+        self.setDamage(50)
 
+    @property
+    def health(self):
+        return self._health
+
+    @health.setter
+    def health(self, value):
+        if value > 100:
+            Global.titles.scores += 10
+            return
+        elif value < 0:
+            print("Game Over!")
+        self._health = value

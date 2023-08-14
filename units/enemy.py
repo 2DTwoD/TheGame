@@ -5,6 +5,7 @@ import pygame
 from other.glb import Global
 from other.unit_interfaces import GravityUnitI, Attributes
 from other.unit_parameters import Color
+from units.bonus import Bonus
 from units.bullets import Bullet
 
 
@@ -16,18 +17,18 @@ class Enemy(GravityUnitI):
         GravityUnitI.__init__(self, x, y, width, height)
         self.color = color
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
-        self.health = 100
+        self.health = 30 + 100 * Global.difficult / Global.maxDifficult
         self.jumpCount = 0
         self.shootCount = 0
         self.direction = 1 if self.coordinates.x < Global.hero.coordinates.x else -1
         self.damageAnimation = 0
-        self.damage = 10
-        self.maxSpeed = 1 + 2 * random()
+        self.damage = 10 * Global.difficult
+        self.maxSpeed = 1 + random() * (1 + Global.difficult) / Global.maxDifficult
         self.behavior = randint(0, 2)
         self.canJump = randint(0, 1)
         self.canShoot = randint(0, 1)
-        self.shootPeriod = 30 + 60 * randint(0, 5)
-        self.jumpPeriod = 60 + 60 * randint(0, 5)
+        self.shootPeriod = 60 + 15 * randint(Global.maxDifficult - Global.difficult, Global.maxDifficult)
+        self.jumpPeriod = 60 + 15 * randint(Global.maxDifficult - Global.difficult, Global.maxDifficult)
 
     def accAction(self):
         self.speed.x += Enemy.acceleration * self.direction
@@ -94,6 +95,9 @@ class Enemy(GravityUnitI):
         self.damageAnimation = Enemy.damageTime
         if self.health < 0:
             Global.enemies.discard(self)
+            Global.titles.scores += 50
+            if random() > Global.difficult / Global.maxDifficult:
+                Global.bonuses.add(Bonus(self.coordinates.x, self.coordinates.y))
 
     def falling(self):
         Global.enemies.discard(self)
