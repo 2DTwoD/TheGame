@@ -45,9 +45,9 @@ class UnitI(Attributes):
         self.shape = None
 
     def draw(self):
-        self.drawFigure()
         self.singleEngine()
         self.commonEngine()
+        self.drawFigure()
 
     def singleEngine(self):
         pass
@@ -126,22 +126,3 @@ class GravityUnitI(UnitI):
     def leftHit(self, obj: Attributes):
         self.coordinates.x = obj.right_x
         self.speed.x = 0
-
-
-class WallI(Attributes):
-    def __init__(self, x, y, width, height):
-        Attributes.__init__(self, Pair(x, y), Pair(width, height))
-
-    def draw(self):
-        self.singleEngine()
-        self.commonEngine()
-        self.drawFigure()
-
-    def singleEngine(self):
-        pass
-
-    def drawFigure(self):
-        pass
-
-    def commonEngine(self):
-        self.coordinates.y += Global.worldSpeed

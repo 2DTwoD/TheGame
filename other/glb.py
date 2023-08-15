@@ -2,19 +2,23 @@ import pygame
 
 
 class Global:
-    SCREEN_SIZE = (1000, 1000)
     walls = set()
     enemies = set()
     bullets = set()
     bonuses = set()
     hero = None
-    screen = pygame.display.set_mode(SCREEN_SIZE)
-    worldSpeed = 2
-    g = 0.5
+    levelCreator = None
+    titles = None
     keys = None
+
+    SCREEN_SIZE = (1000, 1000)
+    screen = pygame.display.set_mode(SCREEN_SIZE)
+
+    g = 0.5
+    worldSpeed = 1
     difficult = 1
     maxDifficult = 10
-    titles = None
+    gameOver = True
 
     @staticmethod
     def screenWidth():
@@ -23,3 +27,14 @@ class Global:
     @staticmethod
     def screenHeight():
         return Global.SCREEN_SIZE[1]
+
+    @staticmethod
+    def resetGame():
+        Global.difficult = 1
+        Global.gameOver = True
+        Global.worldSpeed = 1
+
+    @staticmethod
+    def setsIsEmpty():
+        return len(Global.walls) + len(Global.enemies) + len(Global.bullets) + len(Global.bonuses) == 0
+

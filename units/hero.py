@@ -21,7 +21,20 @@ class Hero(GravityUnitI):
         self.currentReload = Hero.reloadCicle
         self.damageAnimation = 0
         self._health = 100
+        self._bullets = 100
         self.verticalStep = True
+        self.firstPushFlag = False
+
+    def reInit(self):
+        self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
+        self.direction = 1
+        self.currentReload = Hero.reloadCicle
+        self.damageAnimation = 0
+        self.health = 100
+        self.bullets = 100
+        self.verticalStep = True
+        self.coordinates.x = 0
+        self.coordinates.y = 0
 
     def singleEngine(self):
         if Global.keys[pygame.K_d]:
@@ -46,22 +59,24 @@ class Hero(GravityUnitI):
         if self.speed.y > Hero.maxSpeed * 3:
             self.speed.y = Hero.maxSpeed * 3
 
-        if Global.keys[pygame.K_SPACE] and self.currentReload == 0 and Global.titles.bullets > 0:
+        if Global.keys[pygame.K_SPACE] and self.currentReload == 0 and self.bullets > 0:
             self.currentReload = Hero.reloadCicle
             Global.bullets.add(Bullet(self.middle_x,
                                       self.coordinates.y + self.dimensions.y / 2,
                                       self.direction))
-            Global.titles.bullets -= 1
+            self.bullets -= 1
 
         if Global.keys[pygame.K_w] and self.verticalStep:
-            if self.onGround:
+            if not self.firstPushFlag:
                 self.speed.y = -Hero.maxSpeed * 1.2
+                self.firstPushFlag = True
             self.speed.y -= 1.3
             if self.speed.y < -Hero.maxSpeed * 3:
                 self.speed.y = -Hero.maxSpeed * 3
                 self.verticalStep = False
         else:
             self.verticalStep = self.onGround
+            self.firstPushFlag = False
 
         if self.damageAnimation <= 0:
             for enemy in Global.enemies:
@@ -84,6 +99,7 @@ class Hero(GravityUnitI):
         if self.damageAnimation != 0:
             return
         self.damageAnimation = Hero.damageTime
+        self.verticalStep = False
         if isinstance(damageSource, Enemy):
             pair = Pair(self.speed.x, self.speed.y)
             self.speed.x = damageSource.speed.x
@@ -105,8 +121,19 @@ class Hero(GravityUnitI):
     @health.setter
     def health(self, value):
         if value > 100:
-            Global.titles.scores += 10
+            Global.levelCreator.scores += 10
             return
-        elif value < 0:
-            print("Game Over!")
+        elif value <= 0:
+            Global.resetGame()
         self._health = value
+
+    @property
+    def bullets(self):
+        return self._bullets
+
+    @bullets.setter
+    def bullets(self, value):
+        if value < 1000:
+            self._bullets = value
+        else:
+            Global.levelCreator.scores += 10

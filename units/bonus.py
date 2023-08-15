@@ -32,9 +32,9 @@ class Bonus(UnitI):
                 case Bonus.HEALTH:
                     Global.hero.health += 5
                 case Bonus.SCORE:
-                    Global.titles.scores += 20
+                    Global.levelCreator.scores += 20
                 case Bonus.BULLET:
-                    Global.titles.bullets += 10
+                    Global.hero.bullets += 10
             Global.bonuses.discard(self)
             return
 

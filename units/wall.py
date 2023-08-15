@@ -1,13 +1,13 @@
 import pygame
 
 from other.glb import Global
-from other.unit_interfaces import WallI
+from other.unit_interfaces import UnitI
 from other.unit_parameters import Color
 
 
-class Wall(WallI):
+class Wall(UnitI):
     def __init__(self, x, y, width, height, color: Color):
-        WallI.__init__(self, x, y, width, height)
+        UnitI.__init__(self, x, y, width, height)
         self.color = color
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
 
