@@ -12,6 +12,7 @@ class Hero(GravityUnitI):
     acceleration = 0.5
     reloadCicle = 5
     damageTime = 60
+    damage = 50
 
     def __init__(self):
         GravityUnitI.__init__(self, 0, 0, 25, 25)
@@ -63,7 +64,7 @@ class Hero(GravityUnitI):
             self.currentReload = Hero.reloadCicle
             Global.bullets.add(Bullet(self.middle_x,
                                       self.coordinates.y + self.dimensions.y / 2,
-                                      self.direction))
+                                      self.direction, Hero.damage))
             self.bullets -= 1
 
         if Global.keys[pygame.K_w] and self.verticalStep:
@@ -109,9 +110,12 @@ class Hero(GravityUnitI):
             self.health -= damageSource.damage
         elif isinstance(damageSource, int):
             self.health -= damageSource
+        elif isinstance(damageSource, Bullet):
+            self.health -= damageSource.damage
 
     def falling(self):
         self.coordinates.y = 0
+        self.damageAnimation = 0
         self.setDamage(50)
 
     @property
@@ -121,10 +125,12 @@ class Hero(GravityUnitI):
     @health.setter
     def health(self, value):
         if value > 100:
-            Global.levelCreator.scores += 10
+            Global.levelCreator.score += 10 * Global.difficult
+            self._health = 100
             return
         elif value <= 0:
             Global.resetGame()
+            return
         self._health = value
 
     @property
@@ -133,7 +139,8 @@ class Hero(GravityUnitI):
 
     @bullets.setter
     def bullets(self, value):
-        if value < 1000:
+        if value <= 500:
             self._bullets = value
         else:
-            Global.levelCreator.scores += 10
+            Global.levelCreator.score += 10 * Global.difficult
+            self._bullets = 500

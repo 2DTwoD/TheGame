@@ -8,12 +8,13 @@ class Global:
     bonuses = set()
     hero = None
     levelCreator = None
-    titles = None
+    menu = None
     keys = None
 
     SCREEN_SIZE = (1000, 1000)
     screen = pygame.display.set_mode(SCREEN_SIZE)
 
+    FPS = 60
     g = 0.5
     worldSpeed = 1
     difficult = 1

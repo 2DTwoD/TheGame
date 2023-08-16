@@ -2,20 +2,19 @@ import pygame
 
 from other.glb import Global
 from other.unit_interfaces import UnitI
-from other.unit_parameters import Color, Pair
+from other.unit_parameters import Color
 
 
 class Bullet(UnitI):
     HERO = 0
     ENEMY = 1
     move = 10
-    damage = 50
 
-    def __init__(self, x, y, direction, target=ENEMY):
+    def __init__(self, x, y, direction, damage, target=ENEMY):
         UnitI.__init__(self, x, y, 5, 5)
         self.speed.x = self.move * direction
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
-
+        self.damage = damage
         self.delFlag = False
         if target == Bullet.ENEMY:
             self.function = self.enemyTest
@@ -38,13 +37,13 @@ class Bullet(UnitI):
         for enemy in Global.enemies:
             if self.hitTest(enemy):
                 Global.bullets.discard(self)
-                enemy.setDamage(Bullet.damage, self.move)
+                enemy.setDamage(Global.hero.damage, self.move)
                 return
 
     def heroTest(self):
         if self.hitTest(Global.hero):
             Global.bullets.discard(self)
-            Global.hero.setDamage(self)
+            Global.hero.setDamage(self.damage)
             return
 
     def drawFigure(self):

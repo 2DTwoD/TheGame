@@ -30,11 +30,11 @@ class Bonus(UnitI):
         if self.hitTest(Global.hero):
             match self.type:
                 case Bonus.HEALTH:
-                    Global.hero.health += 5
+                    Global.hero.health += 10
                 case Bonus.SCORE:
-                    Global.levelCreator.scores += 20
+                    Global.levelCreator.score += 20 * Global.difficult
                 case Bonus.BULLET:
-                    Global.hero.bullets += 10
+                    Global.hero.bullets += 15
             Global.bonuses.discard(self)
             return
 

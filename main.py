@@ -12,7 +12,7 @@ clock = pygame.time.Clock()
 backgroundColor = Color(0, 0, 0)
 Global.hero = Hero()
 Global.levelCreator = LevelCreator()
-Global.titles = Menu()
+Global.menu = Menu()
 
 
 def action(collection: set):
@@ -25,6 +25,7 @@ def action(collection: set):
 
 while True:
     for event in pygame.event.get():
+        Global.menu.inputTextHandler(event)
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -41,8 +42,8 @@ while True:
     action(Global.bullets)
     action(Global.bonuses)
 
-    Global.titles.getTitles()
+    Global.menu.getMenu()
 
     pygame.display.flip()
     Global.screen.fill(backgroundColor.get())
-    clock.tick(60)
+    clock.tick(Global.FPS)

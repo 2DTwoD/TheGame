@@ -22,7 +22,7 @@ class Enemy(GravityUnitI):
         self.shootCount = 0
         self.direction = 1 if self.coordinates.x < Global.hero.coordinates.x else -1
         self.damageAnimation = 0
-        self.damage = int(10 * Global.difficult / 5)
+        self.damage = 5 + int(20 * Global.difficult / Global.maxDifficult)
         self.maxSpeed = 1 + random() * (1 + Global.difficult) / Global.maxDifficult
         self.behavior = randint(0, 2)
         self.canJump = randint(0, 1)
@@ -67,7 +67,7 @@ class Enemy(GravityUnitI):
                 self.shootCount = 0
                 Global.bullets.add(Bullet(self.middle_x,
                                           self.coordinates.y + self.dimensions.y / 2,
-                                          self.direction, Bullet.HERO))
+                                          self.direction, self.damage, Bullet.HERO))
         if self.canJump:
             if self.jumpCount < self.jumpPeriod:
                 self.jumpCount += 1
@@ -95,7 +95,7 @@ class Enemy(GravityUnitI):
         self.damageAnimation = Enemy.damageTime
         if self.health < 0:
             Global.enemies.discard(self)
-            Global.levelCreator.scores += 50 * Global.difficult
+            Global.levelCreator.score += 50 * Global.difficult
             if random() > Global.difficult / Global.maxDifficult:
                 Global.bonuses.add(Bonus(self.coordinates.x, self.coordinates.y))
 
