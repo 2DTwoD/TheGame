@@ -3,7 +3,7 @@ from random import randint
 import pygame
 
 from other.glb import Global
-from other.unit_interfaces import UnitI, GravityUnitI
+from other.unit_interfaces import UnitI
 from other.unit_parameters import Colors
 
 
@@ -43,11 +43,11 @@ class Bonus(UnitI):
         self.shape.y = self.coordinates.y
         match self.type:
             case Bonus.HEALTH:
-                pygame.draw.polygon(Global.screen, self.color.get(), self.getCross())
+                pygame.draw.polygon(Global.screen, self.color, self.getCross())
             case Bonus.SCORE:
-                pygame.draw.polygon(Global.screen, self.color.get(), self.getArrow())
+                pygame.draw.polygon(Global.screen, self.color, self.getArrow())
             case Bonus.BULLET:
-                pygame.draw.polygon(Global.screen, self.color.get(), self.getRhombus())
+                pygame.draw.polygon(Global.screen, self.color, self.getRhombus())
 
     def getArrow(self):
         return [[self.shape.x + 15, self.shape.y],

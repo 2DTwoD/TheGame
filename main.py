@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-from other.unit_parameters import Color
+from other.unit_parameters import Colors
 from other.glb import Global
 from units.hero import Hero
 from units.level_creator import LevelCreator
@@ -9,7 +9,7 @@ from units.menu import Menu
 
 pygame.init()
 clock = pygame.time.Clock()
-backgroundColor = Color(0, 0, 0)
+backgroundColor = Colors.BLACK
 Global.hero = Hero()
 Global.levelCreator = LevelCreator()
 Global.menu = Menu()
@@ -45,5 +45,5 @@ while True:
     Global.menu.getMenu()
 
     pygame.display.flip()
-    Global.screen.fill(backgroundColor.get())
+    Global.screen.fill(backgroundColor)
     clock.tick(Global.FPS)

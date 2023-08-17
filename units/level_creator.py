@@ -8,47 +8,45 @@ from units.wall import Wall
 
 
 class LevelCreator:
-
-    wallPeriod = 3 * Global.FPS
     difficultPeriod = 60 * Global.FPS
     wallThickness = 50
     minGap = 100
+    wallDistance = 200
     maxEnemies = 7
     maxBonuses = 4
 
     def __init__(self):
-        self.curWallTime = 0
+        self.curWallDistance = 0
         self.curDifficultTime = 0
         self.startWallX = 0
         self._score = 0
         self.reInit()
 
     def run(self):
-
-        if self.curWallTime < LevelCreator.wallPeriod / Global.worldSpeed:
-            self.curWallTime += 1
-        else:
-            self.curWallTime = 0
-            self.score += 5 * Global.difficult
-            self.getRelief(-LevelCreator.wallThickness)
-
         if self.curDifficultTime < LevelCreator.difficultPeriod:
             self.curDifficultTime += 1
         else:
             if Global.difficult < Global.maxDifficult:
                 Global.difficult += 1
             self.curDifficultTime = 0
-            Global.worldSpeed = int(1 + 2 * Global.difficult / Global.maxDifficult)
+            Global.worldSpeed = int(1 + 2 * pow(Global.difficult / Global.maxDifficult, 1.5))
+
+        if self.curWallDistance < LevelCreator.wallDistance:
+            self.curWallDistance += Global.worldSpeed
+        else:
+            self.curWallDistance = 0
+            self.score += 5 * Global.difficult
+            self.getRelief(-LevelCreator.wallThickness)
 
     def reInit(self):
-        self.curWallTime = 0
+        self.curWallDistance = 0
         self.curDifficultTime = 0
         self.startWallX = 0
         self.score = 0
         curY = -LevelCreator.wallThickness
         while curY < Global.screenHeight():
             self.getRelief(curY)
-            curY += LevelCreator.wallPeriod
+            curY += LevelCreator.wallDistance
 
     def getRelief(self, y):
         self.startWallX = 0
@@ -74,7 +72,7 @@ class LevelCreator:
 
         numOfBonuses = randint(int(difKoefRev * LevelCreator.maxBonuses), LevelCreator.maxBonuses)
         while numOfBonuses < LevelCreator.maxBonuses:
-            Global.bonuses.add(Bonus(randrange(Global.screenWidth()), y - 30 - randint(0, 100)))
+            Global.bonuses.add(Bonus(randrange(Global.screenWidth() - 30), y - 30 - randint(0, LevelCreator.wallDistance - LevelCreator.wallThickness - 30)))
             numOfBonuses += 1
 
     @property

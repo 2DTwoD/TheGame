@@ -2,7 +2,7 @@ import pygame
 
 from other.glb import Global
 from other.unit_interfaces import UnitI
-from other.unit_parameters import Color
+from other.unit_parameters import Colors
 
 
 class Bullet(UnitI):
@@ -18,10 +18,10 @@ class Bullet(UnitI):
         self.delFlag = False
         if target == Bullet.ENEMY:
             self.function = self.enemyTest
-            self.color = Color(255, 255, 255)
+            self.color = Colors.WHITE
         else:
             self.function = self.heroTest
-            self.color = Color(237, 28, 36)
+            self.color = Colors.RED
 
     def singleEngine(self):
         self.coordinates.x += self.speed.x
@@ -49,4 +49,4 @@ class Bullet(UnitI):
     def drawFigure(self):
         self.shape.x = self.coordinates.x
         self.shape.y = self.coordinates.y
-        pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)
+        pygame.draw.rect(Global.screen, self.color, self.shape, 0)

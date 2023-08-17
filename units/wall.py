@@ -2,11 +2,10 @@ import pygame
 
 from other.glb import Global
 from other.unit_interfaces import UnitI
-from other.unit_parameters import Color
 
 
 class Wall(UnitI):
-    def __init__(self, x, y, width, height, color: Color):
+    def __init__(self, x, y, width, height, color):
         UnitI.__init__(self, x, y, width, height)
         self.color = color
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
@@ -17,4 +16,4 @@ class Wall(UnitI):
 
     def drawFigure(self):
         self.shape.y = self.coordinates.y
-        pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)
+        pygame.draw.rect(Global.screen, self.color, self.shape, 0)

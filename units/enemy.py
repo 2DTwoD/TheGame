@@ -4,7 +4,6 @@ import pygame
 
 from other.glb import Global
 from other.unit_interfaces import GravityUnitI, Attributes
-from other.unit_parameters import Color
 from units.bonus import Bonus
 from units.bullets import Bullet
 
@@ -13,7 +12,7 @@ class Enemy(GravityUnitI):
     acceleration = 0.2
     damageTime = 10
 
-    def __init__(self, x, y, width, height, color: Color):
+    def __init__(self, x, y, width, height, color):
         GravityUnitI.__init__(self, x, y, width, height)
         self.color = color
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
@@ -87,7 +86,7 @@ class Enemy(GravityUnitI):
         self.shape.x = self.coordinates.x
         self.shape.y = self.coordinates.y
         if self.damageAnimation % 2 == 0:
-            pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)
+            pygame.draw.rect(Global.screen, self.color, self.shape, 0)
 
     def setDamage(self, value: int, bDirection: int):
         self.health -= value

@@ -1,3 +1,8 @@
+from random import randint
+
+import pygame
+
+
 class Pair:
     def __init__(self, _x: int, _y: int):
         self._x = _x
@@ -23,46 +28,16 @@ class Pair:
         return self.x, self.y
 
 
-class Color:
-    def __init__(self, _r, _g, _b):
-        self._r = _r
-        self._g = _g
-        self._b = _b
-
-    @property
-    def r(self):
-        return self._r
-
-    @r.setter
-    def r(self, value):
-        self._r = value
-
-    @property
-    def g(self):
-        return self._g
-
-    @g.setter
-    def g(self, value):
-        self._g = value
-
-    @property
-    def b(self):
-        return self._b
-
-    @b.setter
-    def b(self, value):
-        self._b = value
-
-    def get(self):
-        return self.r, self.g, self.b
-
-
 class Colors:
-    WHITE = Color(255, 255, 255)
-    BLACK = Color(0, 0, 0)
-    GREEN = Color(34, 117, 76)
-    GRAY = Color(195, 195, 195)
-    RED = Color(237, 28, 36)
-    BLUE = Color(0, 162, 232)
-    YELLOW = Color(255, 242, 0)
-    BROWN = Color(131, 81, 54)
+    WHITE = pygame.Color(255, 255, 255)
+    BLACK = pygame.Color(0, 0, 0)
+    GREEN = pygame.Color(34, 117, 76)
+    GRAY = pygame.Color(195, 195, 195)
+    RED = pygame.Color(237, 28, 36)
+    BLUE = pygame.Color(0, 162, 232)
+    YELLOW = pygame.Color(255, 242, 0)
+    BROWN = pygame.Color(131, 81, 54)
+
+    @staticmethod
+    def getRandom():
+        return pygame.Color(randint(0, 255), randint(0, 255), randint(0, 255))

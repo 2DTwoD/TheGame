@@ -2,7 +2,7 @@ import pygame
 
 from other.glb import Global
 from other.unit_interfaces import GravityUnitI, Attributes
-from other.unit_parameters import Color, Pair
+from other.unit_parameters import Pair, Colors
 from units.bullets import Bullet
 from units.enemy import Enemy
 
@@ -16,7 +16,7 @@ class Hero(GravityUnitI):
 
     def __init__(self):
         GravityUnitI.__init__(self, 0, 0, 25, 25)
-        self.color = Color(255, 255, 255)
+        self.color = Colors.WHITE
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
         self.direction = 1
         self.currentReload = Hero.reloadCicle
@@ -94,7 +94,7 @@ class Hero(GravityUnitI):
         self.shape.x = self.coordinates.x
         self.shape.y = self.coordinates.y
         if self.damageAnimation % 2 == 0:
-            pygame.draw.rect(Global.screen, self.color.get(), self.shape, 0)
+            pygame.draw.rect(Global.screen, self.color, self.shape, 0)
 
     def setDamage(self, damageSource):
         if self.damageAnimation != 0:

@@ -1,10 +1,9 @@
 import itertools
-from random import randint
 
 import pygame
 
 from other.glb import Global
-from other.unit_parameters import Color, Colors
+from other.unit_parameters import Colors
 
 
 class Menu:
@@ -13,7 +12,7 @@ class Menu:
         self.titleFont = pygame.font.SysFont('Times New Roman', 80)
         self.menuFont1 = pygame.font.SysFont('Times New Roman', 30)
         self.menuFont2 = pygame.font.SysFont('Times New Roman', 20)
-        self.gameFont = pygame.font.SysFont('Times New Roman', 20)
+        self.gameFont = pygame.font.SysFont('Times New Roman', 20, bold=True)
         self.color = Colors.WHITE
         self.scoreTable = {}
 
@@ -51,22 +50,22 @@ class Menu:
         Global.screen.blit(surface, (x, y))
 
     def getMenu(self):
+        if self.blinkCount > 20:
+            self.blinkCount = 0
+            self.blink = not self.blink
+        else:
+            self.blinkCount += 1
         if Global.gameOver:
-
-            if self.blinkCount > 30:
-                self.blinkCount = 0
-                self.blink = not self.blink
-            else:
-                self.blinkCount += 1
-
             if self.newScore:
-                self.getSurfaceText(self.menuFont1, f'Your scores: {Global.levelCreator.score}', self.color.get(),
+                self.getSurfaceText(self.titleFont, f'TheGameOver', Colors.getRandom(),
+                                    3 * Global.screenHeight() / 10)
+                self.getSurfaceText(self.menuFont1, f'Your scores: {Global.levelCreator.score}', Colors.BLUE,
                                     16 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont1, 'Enter your name:', self.color.get(),
+                self.getSurfaceText(self.menuFont1, 'Enter your name:', self.color,
                                     18 * Global.screenHeight() / 40)
 
-                nameSurface = self.menuFont1.render(self.gamerName, True, Colors.BLACK.get())
-                pygame.draw.rect(Global.screen, Colors.WHITE.get(), self.inputRect)
+                nameSurface = self.menuFont1.render(self.gamerName, True, Colors.BLACK)
+                pygame.draw.rect(Global.screen, Colors.WHITE, self.inputRect)
                 Global.screen.blit(nameSurface, (self.inputRect.x + 5, self.inputRect.y + 5))
 
                 self.inputRect.w = max(100, nameSurface.get_width() + 10)
@@ -90,22 +89,21 @@ class Menu:
                     self.keyBounce = True
 
             else:
-                rainbow = Color(randint(0, 255), randint(0, 255), randint(0, 255))
-                self.getSurfaceText(self.titleFont, 'TheGame', rainbow.get(), 3 * Global.screenHeight() / 10)
-                self.getSurfaceText(self.menuFont1, 'Controls:', Colors.GRAY.get(), 16 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'A/D - Left/Right', Colors.WHITE.get(),
+                self.getSurfaceText(self.titleFont, 'TheGame', Colors.getRandom(), 3 * Global.screenHeight() / 10)
+                self.getSurfaceText(self.menuFont1, 'Controls:', Colors.GRAY, 16 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'A/D - Left/Right', Colors.WHITE,
                                     18 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'W - Jump', Colors.WHITE.get(), 19 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'SPACE - Shoot', Colors.WHITE.get(), 20 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'W - Jump', Colors.WHITE, 19 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'SPACE - Shoot', Colors.WHITE, 20 * Global.screenHeight() / 40)
                 if self.blink:
-                    self.getSurfaceText(self.menuFont1, 'Push ENTER to start', Colors.RED.get(),
+                    self.getSurfaceText(self.menuFont1, 'Push ENTER to start', Colors.RED,
                                         22 * Global.screenHeight() / 40)
                 if len(self.scoreTable) != 0:
-                    self.getSurfaceText(self.menuFont1, 'High score table:', Colors.GRAY.get(),
+                    self.getSurfaceText(self.menuFont1, 'High score table:', Colors.GRAY,
                                         24 * Global.screenHeight() / 40)
 
                 for index, (name, score) in enumerate(self.scoreTable.items()):
-                    self.getSurfaceText(self.menuFont2, f'{index + 1}) {name} - {score}', Colors.WHITE.get(),
+                    self.getSurfaceText(self.menuFont2, f'{index + 1}) {name} - {score}', Colors.WHITE,
                                         (26 + index) * Global.screenHeight() / 40)
 
                 if Global.keys[pygame.K_RETURN] and Global.setsIsEmpty() and not self.keyBounce:
@@ -115,8 +113,9 @@ class Menu:
                     self.newScore = True
                 if not Global.keys[pygame.K_RETURN]:
                     self.keyBounce = False
-
         else:
-            self.getSurfaceText(self.gameFont, f'Scores: {Global.levelCreator.score}', Colors.YELLOW.get(), 0, zeroX=True)
-            self.getSurfaceText(self.gameFont, f'Health: {Global.hero.health}', Colors.RED.get(), 30, zeroX=True)
-            self.getSurfaceText(self.gameFont, f'Bullets: {Global.hero.bullets}', Colors.BLUE.get(), 60, zeroX=True)
+            self.getSurfaceText(self.gameFont, f'Scores: {Global.levelCreator.score}', Colors.YELLOW, 0, zeroX=True)
+            if Global.hero.health > 20 or self.blink:
+                self.getSurfaceText(self.gameFont, f'Health: {Global.hero.health}', Colors.RED, 30, zeroX=True)
+            if Global.hero.bullets > 30 or self.blink:
+                self.getSurfaceText(self.gameFont, f'Bullets: {Global.hero.bullets}', Colors.BLUE, 60, zeroX=True)
