@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="25"
+   height="25"
+   viewBox="0 0 6.6145832 6.6145832"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="ico.svg"
+   inkscape:export-filename="ico.png"
+   inkscape:export-xdpi="100"
+   inkscape:export-ydpi="100"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="11.313709"
+     inkscape:cx="19.533825"
+     inkscape:cy="17.147339"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g4692" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g4692"
+       transform="scale(2.5000001)">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke-width:0.806016;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1"
+         id="rect4675"
+         width="2.6458333"
+         height="2.6458333"
+         x="0"
+         y="7.9472862e-08" />
+      <path
+         id="rect3898"
+         style="fill:#ffee00;fill-opacity:1;stroke-width:0.363339;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1"
+         d="M 1.3179556,0.48203773 0.76253736,1.0415901 0.76233067,1.0413834 0.20319168,1.6046565 0.7666715,2.1637955 1.3220897,1.6046565 1.3225032,1.6040364 1.8835024,2.1606949 2.4426415,1.5974218 1.8791616,1.0382829 1.8785415,1.038903 Z" />
+    </g>
+  </g>
+</svg>

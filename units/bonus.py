@@ -32,7 +32,7 @@ class Bonus(UnitI):
                 case Bonus.HEALTH:
                     Global.hero.health += 10
                 case Bonus.SCORE:
-                    Global.levelCreator.score += 20 * Global.difficult
+                    Global.levelCreator.score += 30 * Global.difficult
                 case Bonus.BULLET:
                     Global.hero.bullets += 15
             Global.bonuses.discard(self)

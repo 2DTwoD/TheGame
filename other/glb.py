@@ -1,5 +1,7 @@
 import pygame
 
+from other.unit_parameters import Colors
+
 
 class Global:
     walls = set()
@@ -10,6 +12,10 @@ class Global:
     levelCreator = None
     menu = None
     keys = None
+    backgroundColors = (Colors.SKY1, Colors.SKY2, Colors.SKY3, Colors.SKY4, Colors.SKY5,
+                        Colors.SKY6, Colors.SKY7, Colors.SKY8, Colors.SKY9, Colors.SKY10)
+    wallColors = (Colors.WALL1, Colors.WALL2, Colors.WALL3, Colors.WALL4, Colors.WALL5,
+                  Colors.WALL6, Colors.WALL7, Colors.WALL8, Colors.WALL9, Colors.WALL10)
 
     SCREEN_SIZE = (1000, 1000)
     screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -38,4 +44,3 @@ class Global:
     @staticmethod
     def setsIsEmpty():
         return len(Global.walls) + len(Global.enemies) + len(Global.bullets) + len(Global.bonuses) == 0
-

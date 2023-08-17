@@ -1,3 +1,4 @@
+import codecs
 import itertools
 
 import pygame
@@ -5,7 +6,7 @@ import pygame
 from other.glb import Global
 from other.unit_parameters import Colors
 
-
+1
 class Menu:
     def __init__(self):
         pygame.font.init()
@@ -25,9 +26,9 @@ class Menu:
         self.blinkCount = 0
 
         try:
-            file = open("scores.txt", "r", encoding='UTF-8')
+            file = codecs.open("scores.txt", "r")
             for line in file:
-                name, score = line.split(" ")
+                name, score = line.split("@")
                 score = int(score.removesuffix('\n'))
                 self.scoreTable[name] = score
             file.close()
@@ -37,6 +38,8 @@ class Menu:
     def inputTextHandler(self, event):
         if self.newScore and Global.gameOver:
             if event.type == pygame.KEYDOWN:
+                if event.unicode == '@':
+                    return
                 if event.key == pygame.K_BACKSPACE:
                     self.gamerName = self.gamerName[:-1]
                 elif event.key != pygame.K_RETURN:
@@ -84,17 +87,17 @@ class Menu:
                     with open("scores.txt", "a") as file:
                         file.truncate(0)
                         for name, score in self.scoreTable.items():
-                            file.write(f'{name} {score}\n')
+                            file.write(f'{name}@{score}\n')
                     self.newScore = False
                     self.keyBounce = True
 
             else:
                 self.getSurfaceText(self.titleFont, 'TheGame', Colors.getRandom(), 3 * Global.screenHeight() / 10)
                 self.getSurfaceText(self.menuFont1, 'Controls:', Colors.GRAY, 16 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'A/D - Left/Right', Colors.WHITE,
+                self.getSurfaceText(self.menuFont2, 'LEFT/RIGHT - Move Left/Right', Colors.WHITE,
                                     18 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'W - Jump', Colors.WHITE, 19 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'SPACE - Shoot', Colors.WHITE, 20 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'UP - Jump', Colors.WHITE, 19 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'LSHIFT/LALT/S - Shoot', Colors.WHITE, 20 * Global.screenHeight() / 40)
                 if self.blink:
                     self.getSurfaceText(self.menuFont1, 'Push ENTER to start', Colors.RED,
                                         22 * Global.screenHeight() / 40)
@@ -115,7 +118,10 @@ class Menu:
                     self.keyBounce = False
         else:
             self.getSurfaceText(self.gameFont, f'Scores: {Global.levelCreator.score}', Colors.YELLOW, 0, zeroX=True)
-            if Global.hero.health > 20 or self.blink:
+            if Global.hero.health > 30 or self.blink:
                 self.getSurfaceText(self.gameFont, f'Health: {Global.hero.health}', Colors.RED, 30, zeroX=True)
-            if Global.hero.bullets > 30 or self.blink:
+            if Global.hero.bullets > 50 or self.blink:
                 self.getSurfaceText(self.gameFont, f'Bullets: {Global.hero.bullets}', Colors.BLUE, 60, zeroX=True)
+            self.getSurfaceText(self.gameFont,
+                                f'Level: {Global.difficult} ({int((Global.levelCreator.difficultPeriod - Global.levelCreator.curDifficultTime) / 60)})',
+                                Colors.RED, Global.screenHeight() - 30, zeroX=True)

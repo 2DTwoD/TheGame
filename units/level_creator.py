@@ -23,13 +23,13 @@ class LevelCreator:
         self.reInit()
 
     def run(self):
-        if self.curDifficultTime < LevelCreator.difficultPeriod:
-            self.curDifficultTime += 1
-        else:
-            if Global.difficult < Global.maxDifficult:
+        if Global.difficult < Global.maxDifficult:
+            if self.curDifficultTime < LevelCreator.difficultPeriod:
+                self.curDifficultTime += 1
+            else:
                 Global.difficult += 1
-            self.curDifficultTime = 0
-            Global.worldSpeed = int(1 + 2 * pow(Global.difficult / Global.maxDifficult, 1.5))
+                self.curDifficultTime = 0
+                Global.worldSpeed = int(1 + 2 * pow(Global.difficult / Global.maxDifficult, 1.5))
 
         if self.curWallDistance < LevelCreator.wallDistance:
             self.curWallDistance += Global.worldSpeed
@@ -53,21 +53,24 @@ class LevelCreator:
         walls = []
         difKoef = Global.difficult / Global.maxDifficult
         difKoefRev = 1 - difKoef
+        wallColor = Global.wallColors[Global.difficult - 1] if Global.difficult <= len(
+            Global.wallColors) else Global.backgroundColors[-1]
         while self.startWallX < Global.screenWidth():
             if random() >= difKoef - 0.2 * difKoef:
-                walls.append(Wall(self.startWallX, y, LevelCreator.minGap, LevelCreator.wallThickness, Colors.BROWN))
+                walls.append(Wall(self.startWallX, y, LevelCreator.minGap, LevelCreator.wallThickness, wallColor))
             self.startWallX += LevelCreator.minGap
 
         if len(walls) == Global.screenWidth() / LevelCreator.minGap:
             del walls[randint(0, Global.screenWidth() / LevelCreator.minGap) - 1]
         elif len(walls) == 0:
-            walls.append(Wall(randint(0, Global.screenWidth() - LevelCreator.minGap), y, LevelCreator.minGap, LevelCreator.wallThickness, Colors.BROWN))
+            walls.append(Wall(randint(0, Global.screenWidth() - LevelCreator.minGap), y, LevelCreator.minGap,
+                              LevelCreator.wallThickness, wallColor))
 
         Global.walls.update(walls)
 
         numOfEnemy = randint(int(difKoefRev * LevelCreator.maxEnemies), LevelCreator.maxEnemies)
         while numOfEnemy < LevelCreator.maxEnemies:
-            Global.enemies.add(Enemy(randrange(Global.screenWidth()), y + LevelCreator.wallThickness, 25, 25, Colors.RED))
+            Global.enemies.add(Enemy(randrange(Global.screenWidth()), y - LevelCreator.wallThickness, 25, 25, Colors.RED))
             numOfEnemy += 1
 
         numOfBonuses = randint(int(difKoefRev * LevelCreator.maxBonuses), LevelCreator.maxBonuses)

@@ -81,9 +81,7 @@ class GravityUnitI(UnitI):
             self.coordinates.x = Global.screenWidth() - self.dimensions.x
             self.speed.x = 0
         if self.coordinates.y < 0:
-            self.coordinates.y = 0
-            self.speed.y = 0
-            self.upHit(Attributes(Pair(0, 0), Pair(0, 0)))
+            self.raising()
         if self.coordinates.y > Global.screenHeight() + self.dimensions.y:
             self.falling()
 
@@ -107,6 +105,9 @@ class GravityUnitI(UnitI):
                 self.leftHit(obj)
 
     def falling(self):
+        pass
+
+    def raising(self):
         pass
 
     def downHit(self, obj: Attributes):

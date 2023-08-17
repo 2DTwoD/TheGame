@@ -8,8 +8,11 @@ from units.level_creator import LevelCreator
 from units.menu import Menu
 
 pygame.init()
+pygame.display.set_caption('TheGame')
+pygame.display.set_icon(pygame.image.load('ico/ico.png'))
+
 clock = pygame.time.Clock()
-backgroundColor = Colors.BLACK
+
 Global.hero = Hero()
 Global.levelCreator = LevelCreator()
 Global.menu = Menu()
@@ -45,5 +48,11 @@ while True:
     Global.menu.getMenu()
 
     pygame.display.flip()
-    Global.screen.fill(backgroundColor)
+
+    if Global.gameOver:
+        backGround = Colors.BLACK
+    else:
+        backGround = Global.backgroundColors[Global.difficult - 1] if Global.difficult <= len(
+            Global.backgroundColors) else Global.backgroundColors[-1]
+    Global.screen.fill(backGround)
     clock.tick(Global.FPS)

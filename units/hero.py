@@ -38,11 +38,11 @@ class Hero(GravityUnitI):
         self.coordinates.y = 0
 
     def singleEngine(self):
-        if Global.keys[pygame.K_d]:
+        if Global.keys[pygame.K_RIGHT]:
             self.direction = 1
-        if Global.keys[pygame.K_a]:
+        if Global.keys[pygame.K_LEFT]:
             self.direction = -1
-        if not (Global.keys[pygame.K_d] + Global.keys[pygame.K_a]):
+        if not (Global.keys[pygame.K_RIGHT] + Global.keys[pygame.K_LEFT]):
             if self.speed.x * self.direction > 0:
                 self.speed.x -= Hero.acceleration * self.direction
             else:
@@ -60,14 +60,14 @@ class Hero(GravityUnitI):
         if self.speed.y > Hero.maxSpeed * 3:
             self.speed.y = Hero.maxSpeed * 3
 
-        if Global.keys[pygame.K_SPACE] and self.currentReload == 0 and self.bullets > 0:
+        if (Global.keys[pygame.K_LSHIFT] + Global.keys[pygame.K_LALT] + Global.keys[pygame.K_s]) and self.currentReload == 0 and self.bullets > 0:
             self.currentReload = Hero.reloadCicle
             Global.bullets.add(Bullet(self.middle_x,
                                       self.coordinates.y + self.dimensions.y / 2,
                                       self.direction, Hero.damage))
             self.bullets -= 1
 
-        if Global.keys[pygame.K_w] and self.verticalStep:
+        if Global.keys[pygame.K_UP] and self.verticalStep:
             if not self.firstPushFlag:
                 self.speed.y = -Hero.maxSpeed * 1.2
                 self.firstPushFlag = True
@@ -118,6 +118,11 @@ class Hero(GravityUnitI):
         self.damageAnimation = 0
         self.setDamage(50)
 
+    def raising(self):
+        self.coordinates.y = 0
+        self.speed.y = 0
+        self.upHit(Attributes(Pair(0, 0), Pair(0, 0)))
+
     @property
     def health(self):
         return self._health
@@ -125,7 +130,7 @@ class Hero(GravityUnitI):
     @health.setter
     def health(self, value):
         if value > 100:
-            Global.levelCreator.score += 10 * Global.difficult
+            Global.levelCreator.score += 20 * Global.difficult
             self._health = 100
             return
         elif value <= 0:
@@ -142,5 +147,5 @@ class Hero(GravityUnitI):
         if value <= 500:
             self._bullets = value
         else:
-            Global.levelCreator.score += 10 * Global.difficult
+            Global.levelCreator.score += 20 * Global.difficult
             self._bullets = 500

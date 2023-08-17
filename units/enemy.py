@@ -22,7 +22,7 @@ class Enemy(GravityUnitI):
         self.direction = 1 if self.coordinates.x < Global.hero.coordinates.x else -1
         self.damageAnimation = 0
         self.damage = 5 + int(20 * Global.difficult / Global.maxDifficult)
-        self.maxSpeed = 1 + random() * (1 + Global.difficult) / Global.maxDifficult
+        self.maxSpeed = 1.2 + random() * (Global.difficult / Global.maxDifficult)
         self.behavior = randint(0, 2)
         self.canJump = randint(0, 1)
         self.canShoot = randint(0, 1)
