@@ -6,7 +6,7 @@ import pygame
 from other.glb import Global
 from other.unit_parameters import Colors
 
-1
+
 class Menu:
     def __init__(self):
         pygame.font.init()
@@ -21,7 +21,6 @@ class Menu:
         self.gamerName = 'Anonymous'
         self.inputRect = pygame.Rect(0, Global.screenHeight() / 2, 0, 40)
 
-        self.keyBounce = False
         self.blink = True
         self.blinkCount = 0
 
@@ -36,15 +35,46 @@ class Menu:
             print(ex)
 
     def inputTextHandler(self, event):
-        if self.newScore and Global.gameOver:
-            if event.type == pygame.KEYDOWN:
-                if event.unicode == '@':
-                    return
-                if event.key == pygame.K_BACKSPACE:
-                    self.gamerName = self.gamerName[:-1]
-                elif event.key != pygame.K_RETURN:
-                    if len(self.gamerName) < 30:
-                        self.gamerName += event.unicode
+        if event.type == pygame.KEYDOWN:
+            if Global.gameOver:
+                if self.newScore:
+                    if event.unicode == '@':
+                        return
+                    if event.key == pygame.K_BACKSPACE:
+                        self.gamerName = self.gamerName[:-1]
+                    elif event.key != pygame.K_RETURN:
+                        if len(self.gamerName) < 30:
+                            self.gamerName += event.unicode
+                    if event.key == pygame.K_RETURN:
+                        if self.gamerName.strip() == '':
+                            self.gamerName = 'Anonymous'
+                        if self.gamerName in self.scoreTable:
+                            if Global.hero.score > self.scoreTable[self.gamerName]:
+                                self.scoreTable[self.gamerName] = Global.hero.score
+                        else:
+                            self.scoreTable[self.gamerName] = Global.hero.score
+                        self.scoreTable = dict(sorted(self.scoreTable.items(), key=lambda item: item[1], reverse=True))
+                        self.scoreTable = dict(itertools.islice(self.scoreTable.items(), 10))
+                        with open("scores.txt", "a") as file:
+                            file.truncate(0)
+                            for name, score in self.scoreTable.items():
+                                file.write(f'{name}@{score}\n')
+                        self.newScore = False
+                else:
+                    if event.key == pygame.K_RETURN and Global.setsIsEmpty():
+                        Global.gameOver = False
+                        Global.hero.reInit()
+                        Global.levelCreator.reInit()
+                        Global.pause = False
+                        self.newScore = True
+            else:
+                if event.key == pygame.K_p:
+                    Global.pause = not Global.pause
+
+                if event.key == pygame.K_m:
+                    self.newScore = False
+                    Global.gameOver = True
+                    Global.pause = not Global.pause
 
     @staticmethod
     def getSurfaceText(font, text, color, y, zeroX=False):
@@ -62,7 +92,7 @@ class Menu:
             if self.newScore:
                 self.getSurfaceText(self.titleFont, f'TheGameOver', Colors.getRandom(),
                                     3 * Global.screenHeight() / 10)
-                self.getSurfaceText(self.menuFont1, f'Your scores: {Global.levelCreator.score}', Colors.BLUE,
+                self.getSurfaceText(self.menuFont1, f'Your scores: {Global.hero.score}', Colors.BLUE,
                                     16 * Global.screenHeight() / 40)
                 self.getSurfaceText(self.menuFont1, 'Enter your name:', self.color,
                                     18 * Global.screenHeight() / 40)
@@ -74,30 +104,16 @@ class Menu:
                 self.inputRect.w = max(100, nameSurface.get_width() + 10)
                 self.inputRect.x = Global.screenWidth() / 2 - self.inputRect.w / 2
 
-                if Global.keys[pygame.K_RETURN]:
-                    if self.gamerName.strip() == '':
-                        self.gamerName = 'Anonymous'
-                    if self.gamerName in self.scoreTable:
-                        if Global.levelCreator.score > self.scoreTable[self.gamerName]:
-                            self.scoreTable[self.gamerName] = Global.levelCreator.score
-                    else:
-                        self.scoreTable[self.gamerName] = Global.levelCreator.score
-                    self.scoreTable = dict(sorted(self.scoreTable.items(), key=lambda item: item[1], reverse=True))
-                    self.scoreTable = dict(itertools.islice(self.scoreTable.items(), 10))
-                    with open("scores.txt", "a") as file:
-                        file.truncate(0)
-                        for name, score in self.scoreTable.items():
-                            file.write(f'{name}@{score}\n')
-                    self.newScore = False
-                    self.keyBounce = True
-
             else:
-                self.getSurfaceText(self.titleFont, 'TheGame', Colors.getRandom(), 3 * Global.screenHeight() / 10)
-                self.getSurfaceText(self.menuFont1, 'Controls:', Colors.GRAY, 16 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'LEFT/RIGHT - Move Left/Right', Colors.WHITE,
-                                    18 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'UP - Jump', Colors.WHITE, 19 * Global.screenHeight() / 40)
-                self.getSurfaceText(self.menuFont2, 'LSHIFT/LALT/S - Shoot', Colors.WHITE, 20 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.titleFont, 'TheGame', Colors.getRandom(), Global.screenHeight() / 4)
+                self.getSurfaceText(self.menuFont1, 'Controls:', Colors.GRAY, 14 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'Arrows LEFT/RIGHT - Move Left/Right', Colors.WHITE,
+                                    16 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'Arrow UP - Jump', Colors.WHITE, 17 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'Left SHIFT/ Left ALT/ S - Shoot', Colors.WHITE, 18 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'P - Pause', Colors.WHITE, 19 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont2, 'M - exit in Menu', Colors.WHITE,
+                                    20 * Global.screenHeight() / 40)
                 if self.blink:
                     self.getSurfaceText(self.menuFont1, 'Push ENTER to start', Colors.RED,
                                         22 * Global.screenHeight() / 40)
@@ -109,17 +125,16 @@ class Menu:
                     self.getSurfaceText(self.menuFont2, f'{index + 1}) {name} - {score}', Colors.WHITE,
                                         (26 + index) * Global.screenHeight() / 40)
 
-                if Global.keys[pygame.K_RETURN] and Global.setsIsEmpty() and not self.keyBounce:
-                    Global.gameOver = False
-                    Global.hero.reInit()
-                    Global.levelCreator.reInit()
-                    self.newScore = True
-                if not Global.keys[pygame.K_RETURN]:
-                    self.keyBounce = False
         else:
-            self.getSurfaceText(self.gameFont, f'Scores: {Global.levelCreator.score}', Colors.YELLOW, 0, zeroX=True)
+            if Global.pause:
+                self.getSurfaceText(self.menuFont1, 'Pause', Colors.WHITE, 16 * Global.screenHeight() / 40)
+                if self.blink:
+                    self.getSurfaceText(self.menuFont1, 'Push P for continue', Colors.BLUE, 18 * Global.screenHeight() / 40)
+                self.getSurfaceText(self.menuFont1, 'Push M for exit in Menu', Colors.RED, 20 * Global.screenHeight() / 40)
+
+            self.getSurfaceText(self.gameFont, f'Scores: {Global.hero.score}', Colors.YELLOW, 0, zeroX=True)
             if Global.hero.health > 30 or self.blink:
-                self.getSurfaceText(self.gameFont, f'Health: {Global.hero.health}', Colors.RED, 30, zeroX=True)
+                self.getSurfaceText(self.gameFont, f'Health: {Global.hero.health}', Colors.GREEN, 30, zeroX=True)
             if Global.hero.bullets > 50 or self.blink:
                 self.getSurfaceText(self.gameFont, f'Bullets: {Global.hero.bullets}', Colors.BLUE, 60, zeroX=True)
             self.getSurfaceText(self.gameFont,

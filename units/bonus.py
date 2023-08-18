@@ -7,6 +7,19 @@ from other.unit_interfaces import UnitI
 from other.unit_parameters import Colors
 
 
+def newBonus(bonusType, value, obj):
+    match bonusType:
+        case Bonus.SCORE:
+            Global.hero.score += value
+            Global.bonuses.add(Popup(obj, value * Global.difficult, Colors.YELLOW))
+        case Bonus.HEALTH:
+            Global.hero.health += value
+            Global.bonuses.add(Popup(obj, value, Colors.GREEN))
+        case Bonus.BULLET:
+            Global.hero.bullets += value
+            Global.bonuses.add(Popup(obj, value, Colors.BLUE))
+
+
 class Bonus(UnitI):
     HEALTH = 0
     SCORE = 1
@@ -30,11 +43,11 @@ class Bonus(UnitI):
         if self.hitTest(Global.hero):
             match self.type:
                 case Bonus.HEALTH:
-                    Global.hero.health += 10
+                    newBonus(Bonus.HEALTH, 10, self)
                 case Bonus.SCORE:
-                    Global.levelCreator.score += 30 * Global.difficult
+                    newBonus(Bonus.SCORE, 4, self)
                 case Bonus.BULLET:
-                    Global.hero.bullets += 15
+                    newBonus(Bonus.BULLET, 15, self)
             Global.bonuses.discard(self)
             return
 
@@ -78,3 +91,23 @@ class Bonus(UnitI):
                 [self.shape.x + 20, self.shape.y + 10],
                 [self.shape.x + 20, self.shape.y],
                 [self.shape.x + 10, self.shape.y]]
+
+
+class Popup(UnitI):
+    def __init__(self, obj: UnitI, value, color: pygame.Color):
+        UnitI.__init__(self, obj.left_x, obj.up_y, 0, 0)
+        self.value = str(int(value))
+        self.color = pygame.Color(color)
+        self.currentAlpha = 255
+        self.speed.y = -Global.worldSpeed
+        popupFont = pygame.font.SysFont('Times New Roman', 30, bold=True)
+        self.surface = popupFont.render(self.value, True, self.color)
+
+    def singleEngine(self):
+        Global.screen.blit(self.surface, (self.coordinates.x, self.coordinates.y))
+        if self.currentAlpha > 0:
+            self.surface.set_alpha(self.currentAlpha)
+            self.currentAlpha -= 10
+            self.speed.y -= 0.3
+        else:
+            Global.bonuses.discard(self)

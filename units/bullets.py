@@ -11,8 +11,8 @@ class Bullet(UnitI):
     move = 10
 
     def __init__(self, x, y, direction, damage, target=ENEMY):
-        UnitI.__init__(self, x, y, 5, 5)
-        self.speed.x = self.move * direction
+        UnitI.__init__(self, x - 2, y - 2, 5, 5)
+        self.speed.x = Bullet.move * direction
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
         self.damage = damage
         self.delFlag = False
@@ -24,7 +24,6 @@ class Bullet(UnitI):
             self.color = Colors.RED
 
     def singleEngine(self):
-        self.coordinates.x += self.speed.x
         if self.coordinates.x > Global.SCREEN_SIZE[0] or self.coordinates.x < 0:
             Global.bullets.discard(self)
         for wall in Global.walls:
@@ -32,12 +31,13 @@ class Bullet(UnitI):
                 Global.bullets.discard(self)
                 return
         self.function()
+        self.coordinates.x += self.speed.x
 
     def enemyTest(self):
         for enemy in Global.enemies:
             if self.hitTest(enemy):
                 Global.bullets.discard(self)
-                enemy.setDamage(Global.hero.damage, self.move)
+                enemy.setDamage(Global.hero.damage, Bullet.move)
                 return
 
     def heroTest(self):

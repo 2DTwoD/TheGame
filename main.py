@@ -37,7 +37,7 @@ while True:
 
     action(Global.walls)
 
-    if not Global.gameOver:
+    if not Global.gameOver and not Global.pause:
         Global.levelCreator.run()
         Global.hero.draw()
 
@@ -49,7 +49,7 @@ while True:
 
     pygame.display.flip()
 
-    if Global.gameOver:
+    if Global.gameOver or Global.pause:
         backGround = Colors.BLACK
     else:
         backGround = Global.backgroundColors[Global.difficult - 1] if Global.difficult <= len(

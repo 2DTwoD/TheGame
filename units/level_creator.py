@@ -1,8 +1,9 @@
 from random import randrange, randint, random
 
 from other.glb import Global
+from other.unit_interfaces import UnitI
 from other.unit_parameters import Colors
-from units.bonus import Bonus
+from units.bonus import Bonus, newBonus
 from units.enemy import Enemy
 from units.wall import Wall
 
@@ -19,7 +20,6 @@ class LevelCreator:
         self.curWallDistance = 0
         self.curDifficultTime = 0
         self.startWallX = 0
-        self._score = 0
         self.reInit()
 
     def run(self):
@@ -35,14 +35,13 @@ class LevelCreator:
             self.curWallDistance += Global.worldSpeed
         else:
             self.curWallDistance = 0
-            self.score += 5 * Global.difficult
+            newBonus(Bonus.SCORE, 1, UnitI(54, Global.screenHeight() - 50, 20, 20))
             self.getRelief(-LevelCreator.wallThickness)
 
     def reInit(self):
         self.curWallDistance = 0
         self.curDifficultTime = 0
         self.startWallX = 0
-        self.score = 0
         curY = -LevelCreator.wallThickness
         while curY < Global.screenHeight():
             self.getRelief(curY)
@@ -77,11 +76,3 @@ class LevelCreator:
         while numOfBonuses < LevelCreator.maxBonuses:
             Global.bonuses.add(Bonus(randrange(Global.screenWidth() - 30), y - 30 - randint(0, LevelCreator.wallDistance - LevelCreator.wallThickness - 30)))
             numOfBonuses += 1
-
-    @property
-    def score(self):
-        return self._score
-
-    @score.setter
-    def score(self, value):
-        self._score = value

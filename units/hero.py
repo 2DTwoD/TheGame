@@ -3,6 +3,7 @@ import pygame
 from other.glb import Global
 from other.unit_interfaces import GravityUnitI, Attributes
 from other.unit_parameters import Pair, Colors
+from units.bonus import newBonus, Bonus
 from units.bullets import Bullet
 from units.enemy import Enemy
 
@@ -10,7 +11,7 @@ from units.enemy import Enemy
 class Hero(GravityUnitI):
     maxSpeed = 6
     acceleration = 0.5
-    reloadCicle = 5
+    reloadCycle = 5
     damageTime = 60
     damage = 50
 
@@ -19,20 +20,22 @@ class Hero(GravityUnitI):
         self.color = Colors.WHITE
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
         self.direction = 1
-        self.currentReload = Hero.reloadCicle
+        self.currentReload = Hero.reloadCycle
         self.damageAnimation = 0
         self._health = 100
         self._bullets = 100
+        self._score = 0
         self.verticalStep = True
         self.firstPushFlag = False
 
     def reInit(self):
         self.shape = pygame.Rect(*(self.coordinates.get() + self.dimensions.get()))
         self.direction = 1
-        self.currentReload = Hero.reloadCicle
+        self.currentReload = Hero.reloadCycle
         self.damageAnimation = 0
         self.health = 100
         self.bullets = 100
+        self.score = 0
         self.verticalStep = True
         self.coordinates.x = 0
         self.coordinates.y = 0
@@ -61,9 +64,9 @@ class Hero(GravityUnitI):
             self.speed.y = Hero.maxSpeed * 3
 
         if (Global.keys[pygame.K_LSHIFT] + Global.keys[pygame.K_LALT] + Global.keys[pygame.K_s]) and self.currentReload == 0 and self.bullets > 0:
-            self.currentReload = Hero.reloadCicle
+            self.currentReload = Hero.reloadCycle
             Global.bullets.add(Bullet(self.middle_x,
-                                      self.coordinates.y + self.dimensions.y / 2,
+                                      self.middle_y,
                                       self.direction, Hero.damage))
             self.bullets -= 1
 
@@ -130,7 +133,8 @@ class Hero(GravityUnitI):
     @health.setter
     def health(self, value):
         if value > 100:
-            Global.levelCreator.score += 20 * Global.difficult
+            self.score += 25
+            newBonus(Bonus.SCORE, 4, self)
             self._health = 100
             return
         elif value <= 0:
@@ -144,8 +148,16 @@ class Hero(GravityUnitI):
 
     @bullets.setter
     def bullets(self, value):
-        if value <= 500:
+        if value <= 300:
             self._bullets = value
         else:
-            Global.levelCreator.score += 20 * Global.difficult
-            self._bullets = 500
+            newBonus(Bonus.SCORE, 4, self)
+            self._bullets = 300
+
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self, value):
+        self._score = value

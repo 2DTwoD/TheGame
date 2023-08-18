@@ -18,6 +18,7 @@ class Global:
                   Colors.WALL6, Colors.WALL7, Colors.WALL8, Colors.WALL9, Colors.WALL10)
 
     SCREEN_SIZE = (1000, 1000)
+
     screen = pygame.display.set_mode(SCREEN_SIZE)
 
     FPS = 60
@@ -26,6 +27,7 @@ class Global:
     difficult = 1
     maxDifficult = 10
     gameOver = True
+    pause = False
 
     @staticmethod
     def screenWidth():

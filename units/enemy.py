@@ -4,7 +4,7 @@ import pygame
 
 from other.glb import Global
 from other.unit_interfaces import GravityUnitI, Attributes
-from units.bonus import Bonus
+from units.bonus import Bonus, newBonus
 from units.bullets import Bullet
 
 
@@ -94,7 +94,7 @@ class Enemy(GravityUnitI):
         self.damageAnimation = Enemy.damageTime
         if self.health < 0:
             Global.enemies.discard(self)
-            Global.levelCreator.score += 50 * Global.difficult
+            newBonus(Bonus.SCORE, 5, self)
             if random() > Global.difficult / Global.maxDifficult:
                 Global.bonuses.add(Bonus(self.coordinates.x, self.coordinates.y))
 

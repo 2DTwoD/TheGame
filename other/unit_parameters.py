@@ -37,6 +37,7 @@ class Colors:
     BLUE = pygame.Color(0, 162, 232)
     YELLOW = pygame.Color(255, 242, 0)
     BROWN = pygame.Color(131, 81, 54)
+
     SKY1 = pygame.Color(51, 216, 189)
     SKY2 = pygame.Color(57, 213, 118)
     SKY3 = pygame.Color(178, 213, 119)
@@ -47,6 +48,7 @@ class Colors:
     SKY8 = pygame.Color(98, 80, 110)
     SKY9 = pygame.Color(23, 23, 55)
     SKY10 = BLACK
+
     WALL1 = pygame.Color(0, 59, 94)
     WALL2 = pygame.Color(73, 76, 140)
     WALL3 = pygame.Color(188, 102, 16)
@@ -65,4 +67,3 @@ class Colors:
     @staticmethod
     def getInverse(color):
         return pygame.Color(255 - color.r, 255 - color.g, 255 - color.b)
-

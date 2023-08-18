@@ -45,6 +45,8 @@ class UnitI(Attributes):
         self.shape = None
 
     def draw(self):
+        if Global.pause:
+            return
         self.singleEngine()
         self.commonEngine()
         self.drawFigure()
@@ -71,6 +73,8 @@ class GravityUnitI(UnitI):
         self.onGround = False
 
     def draw(self):
+        if Global.pause:
+            return
         self.speed.y += Global.g
         UnitI.draw(self)
         UnitI.commonEngine(self)
